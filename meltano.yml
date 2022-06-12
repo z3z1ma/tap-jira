@@ -1,0 +1,38 @@
+version: 1
+send_anonymous_usage_stats: true
+project_id: tap-jira
+plugins:
+  extractors:
+    - name: tap-jira
+      namespace: tap_jira
+      pip_url: -e .
+      capabilities:
+        - state
+        - catalog
+        - discover
+      settings:
+        - name: base_url
+          kind: string
+          description: The base URL for your Jira instance
+          placeholder: "https://jira.atlassian.com"
+        - name: username
+          kind: string
+          description: Jira user log in
+        - name: password
+          kind: password
+          description: |
+            Jira user API token. See here for details on how to create
+            https://support.atlassian.com/atlassian-account/docs/manage-api-tokens-for-your-atlassian-account/
+        - name: start_date
+          value: "2006-01-01"
+          kind: date_iso8601
+          description: The start date for the issues stream
+      select:
+        - "issues.*"
+        - "!issues.customfield_*"
+        - "projects.*"
+        - "users.*"
+  loaders:
+    - name: target-jsonl
+      variant: andyh1203
+      pip_url: target-jsonl
